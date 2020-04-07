@@ -21,7 +21,6 @@ ipcRenderer.on('reload', () => {
 });
 
 function snapshot() {
-    console.log(MakerJsPlayground.getProcessedModel());
     var request = {
         format: MakerJsPlaygroundExport.ExportFormat.Pdf,
         formatTitle: 'PDF',

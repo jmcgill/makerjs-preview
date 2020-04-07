@@ -1,16 +1,14 @@
 // Modules to control application life and create native browser window
-const { app, BrowserWindow, ipcMain } = require('electron');
+const { app, BrowserWindow, Menu, ipcMain, dialog } = require('electron');
 const path = require('path');
 const fs = require('fs');
 const chokidar = require("chokidar");
 const moment = require('moment');
 
 let mainWindow = null;
+let filename = null;
 
 function reload() {
-  const args = process.argv;
-  const filename = process.argv[2];
-
   console.log('Loading ' + filename);
   mainWindow.loadFile('playground/app.html');
 }
@@ -37,6 +35,11 @@ function saveFile(format, text, filename) {
   fs.writeFileSync(path.join(dirName, filename + '.pdf'), text);
 }
 
+function storePosition() {
+    const p = path.join(app.getPath('userData'), 'config.json');
+    fs.writeFileSync(p, JSON.stringify(mainWindow.getBounds()));
+}
+
 function createWindow () {
   // Create the browser window.
   mainWindow = new BrowserWindow({
@@ -47,24 +50,77 @@ function createWindow () {
       nodeIntegration: true
     }
   });
+  mainWindow.loadFile('splash.html');
 
-  if (fs.existsSync('config.json')) {
-    const bounds = JSON.parse(fs.readFileSync('config.json'));
+  const p = path.join(app.getPath('userData'), 'config.json');
+  if (fs.existsSync(p)) {
+    const bounds = JSON.parse(fs.readFileSync(p));
     mainWindow.setBounds(bounds);
   }
 
   mainWindow.on('move', e => {
-    fs.writeFileSync('config.json', JSON.stringify(mainWindow.getBounds()));
+    storePosition();
   });
 
   mainWindow.on('resize', e => {
-    fs.writeFileSync('config.json', JSON.stringify(mainWindow.getBounds()));
+    storePosition();
   });
 
-  // mainWindow.webContents.openDevTools();
+  if (process.argv.length > 2) {
+    filename = process.argv[2];
+    completeStartup();
+    return;
+  }
+
+    var menu = Menu.buildFromTemplate([
+    {
+        label: 'App'
+    },
+        {
+            label: 'File',
+            submenu: [
+
+                {
+                    label: 'New',
+                    click() {
+                        dialog.showSaveDialog({
+                        }).then((e) => {
+                            if (e.canceled) {
+                                return;
+                            }
+
+                            fs.writeFileSync(e.filePath, fs.readFileSync(path.join(app.getAppPath(), 'empty.js')));
+                            filename = e.filePath;
+                            completeStartup();
+                        });
+                    }
+                },
+                {
+                    label: 'Open',
+                    click() {
+                        dialog.showOpenDialog({
+                            properties: ['openFile', 'promptToCreate']
+                        }).then((e) => {
+                            if (e.canceled) {
+                                return;
+                            }
+
+                            filename = e.filePaths[0];
+                            completeStartup();
+                        });
+                    }
+                }
+            ]
+        }
+    ]);
+
+    Menu.setApplicationMenu(menu);
+}
+
+function completeStartup() {
   reload();
 
-  const watcher = chokidar.watch(process.argv[2], {
+  const watcher = chokidar.watch(filename, {
     persistent: true
   });
 
@@ -75,7 +131,6 @@ function createWindow () {
 }
 
 function getLatestCode() {
-  const filename = process.argv[2];
   return fs.readFileSync(filename);
 }
 

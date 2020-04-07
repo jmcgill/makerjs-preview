@@ -71,20 +71,28 @@ var mockDocument = {
         htmls.push(html);
     }
 };
-var mockConsole = {
-    log: function (entry) {
-        switch (typeof entry) {
-            case 'number':
-                logs.push('' + entry);
-                break;
-            case 'string':
-                logs.push(entry);
-                break;
-            default:
-                logs.push(JSON.stringify(entry));
-        }
+
+window.console = {
+    log: function(e) {
+        logs.push(e);
     }
 };
+
+//
+// var mockConsole = {
+//     log: function (entry) {
+//         switch (typeof entry) {
+//             case 'number':
+//                 logs.push('' + entry);
+//                 break;
+//             case 'string':
+//                 logs.push(entry);
+//                 break;
+//             default:
+//                 logs.push(JSON.stringify(entry));
+//         }
+//     }
+// };
 var baseHtmlLength;
 var baseLogLength;
 var htmls;
@@ -92,6 +100,7 @@ var logs;
 var kit;
 var activeRequestId;
 onmessage = function (ev) {
+    console.log('Running rendering method');
     var request = ev.data;
     if (request.orderedDependencies) {
         self.require = module.require;
@@ -137,7 +146,8 @@ onmessage = function (ev) {
                 var response = {
                     requestId: request.requestId,
                     model: model,
-                    html: getHtml()
+                    html: getHtml(),
+                    logs: logs,
                 };
                 postMessage(response);
             }

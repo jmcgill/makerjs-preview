@@ -80,21 +80,25 @@ var MakerJsRequireIframe;
     }
     function getLogsHtmls() {
         var logHtmls = [];
-        if (logs.length > 0) {
-            logHtmls.push('<div class="section"><div class="separator"><span class="console">console:</span></div>');
-            logs.forEach(function (log) {
-                var logDiv = new makerjs.exporter.XmlTag('div', { "class": "console" });
-                logDiv.innerText = log;
-                logHtmls.push(logDiv.toString());
-            });
-            logHtmls.push('</div>');
-        }
+        // if (logs.length > 0) {
+        //     logHtmls.push('<div class="section"><div class="separator"><span class="console">console:</span></div>');
+        //     logs.forEach(function (log) {
+        //         var logDiv = new makerjs.exporter.XmlTag('div', { "class": "console" });
+        //         logDiv.innerText = 'WOO' + log;
+        //         logHtmls.push(logDiv.toString());
+        //     });
+        //     logHtmls.push('</div>');
+        // }
         return logHtmls;
     }
     function getHtml() {
         return htmls.concat(getLogsHtmls()).join('');
     }
     MakerJsRequireIframe.getHtml = getHtml;
+    function getLogs() {
+        return logs;
+    }
+    MakerJsRequireIframe.getLogs = getLogs;
     function resetLog() {
         htmls = [];
         logs = [];
@@ -118,19 +122,19 @@ var MakerJsRequireIframe;
     document.write = function (html) {
         htmls.push(html);
     };
-    //override console.log
-    // console.log = function (entry) {
-    //     switch (typeof entry) {
-    //         case 'number':
-    //             logs.push('' + entry);
-    //             break;
-    //         case 'string':
-    //             logs.push(entry);
-    //             break;
-    //         default:
-    //             logs.push(JSON.stringify(entry));
-    //     }
-    // };
+    // override console.log
+    console.log = function (entry) {
+        switch (typeof entry) {
+            case 'number':
+                logs.push('' + entry);
+                break;
+            case 'string':
+                logs.push(entry);
+                break;
+            default:
+                logs.push(JSON.stringify(entry));
+        }
+    };
     window.onerror = function () {
         var errorEvent = window.event;
         var errorName = 'Error';
@@ -240,7 +244,7 @@ var MakerJsRequireIframe;
                 }
                 //send results back to parent window
                 console.log('Porcessing result', model);
-                parent.MakerJsPlayground.processResult({ html: getHtml(), result: window.module.exports || model, orderedDependencies: orderedDependencies, paramValues: window.paramValues });
+                parent.MakerJsPlayground.processResult({ logs: logs, html: getHtml(), result: window.module.exports || model, orderedDependencies: orderedDependencies, paramValues: window.paramValues });
             }, 0);
         }
         ;
@@ -274,7 +278,7 @@ var MakerJsRequireIframe;
         }
     };
     window.playgroundRender = function (result) {
-        parent.MakerJsPlayground.processResult({ html: getHtml(), result: result, paramValues: window.paramValues });
+        parent.MakerJsPlayground.processResult({ logs: logs, html: getHtml(), result: result, paramValues: window.paramValues });
     };
     function devNull() { }
     var mockMakerJs = {};
@@ -299,6 +303,7 @@ var MakerJsRequireIframe;
 parent.MakerJsPlayground.mainThreadConstructor = function (kit, params) {
     MakerJsRequireIframe.resetLog();
     return {
+        logs: MakerJsRequireIframe.getLogs(),
         model: parent.makerjs.kit.construct(kit, params),
         html: MakerJsRequireIframe.getHtml()
     };

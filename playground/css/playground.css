@@ -274,10 +274,10 @@ svg#drawing .locked {
 }
 
 #grid {
-    height: 100%; 
+    height: 100%;
     overflow: visible;
     position:absolute;
-    width: 100%; 
+    width: 100%;
 }
 
 .grid-line-1 {
@@ -498,12 +498,12 @@ svg#pointers line {
 .download-ready #download-ready,
 .download-options #download-options,
 .download-error #download-error {
-    display: block;    
+    display: block;
 }
 
-.download-ready #download-select, 
-.download-ready #download-generating, 
-.download-error #download-select, 
+.download-ready #download-select,
+.download-ready #download-generating,
+.download-error #download-select,
 .download-error #download-generating {
     display: none;
 }
@@ -565,11 +565,11 @@ svg#pointers line {
 }
 
 .scroll-nav-links {
-    position: fixed; 
-    bottom: .75em; 
+    position: fixed;
+    bottom: .75em;
     right: 0;
     z-index: 7;
-    padding: .25em .5em .5em 1em; 
+    padding: .25em .5em .5em 1em;
     background-color: #555;
     opacity: .85;
     border-top-left-radius: 1em;
@@ -663,7 +663,7 @@ body.side-by-side {
     top: 0;
     left: 0;
     bottom: 0;
-    right: 50%;
+    right: 0;
     padding: 0 1em;
     overflow-y: scroll;
 }

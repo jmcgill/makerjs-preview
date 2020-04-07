@@ -127,9 +127,9 @@
     </script>
 
 </head>
-<body class="no-notes collapse-annotation collapse-flow collapse-insert-menu">
+<body class="no-notes collapse-annotation collapse-flow collapse-insert-menu" style="height: 100%">
     <a name="top"></a>
-    <main>
+    <main style="height: 100%">
         <header class="logo">
             <!-- <a href="http://maker.js.org/"><img src="img/m.png" /> -->
             <button style="color: white; background: rgb(67, 120, 192); font-family: 'Segoe UI', sans-serif; font-size: medium; border-radius: 2px; padding: 10px; border: none; width: 100px; cursor: pointer" onClick="snapshot()">Snapshot</button>
@@ -183,7 +183,8 @@
             </div>
             <div id="notes"></div>
         </section>
+        <div id="log" style="background: #f8f8f8; padding: 20px; font-family: monospace; overflow-y: scroll; overflow-x: hidden; height: calc(100% - 500px)">
+        </div>
     </main>
-
 </body>
 </html>

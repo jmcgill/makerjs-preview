@@ -640,6 +640,11 @@ var MakerJsPlayground;
     function constructOnMainThreadReal(realValues, successCb) {
         try {
             var result = MakerJsPlayground.mainThreadConstructor(processed.kit, realValues);
+            if (result.logs) {
+                result.logs.forEach(MakerJsPlayground.log);
+            }
+
+            // MakerJsPlayground.log(result.logs);
             processed.html = result.html;
             setProcessedModel(result.model);
             if (successCb) {
@@ -680,6 +685,7 @@ var MakerJsPlayground;
                 renderInWorker.hasKit = true;
                 processed.html = response.html;
                 successHandler(response.model);
+                console.log('RENDERING COMPLETE');
             }
         };
         idToUrlMap = {};
@@ -702,6 +708,7 @@ var MakerJsPlayground;
         if (!renderInWorker.hasKit)
             return;
         renderInWorker.worker.onmessage = function (ev) {
+            console.log(ev);
             var response = ev.data;
             if (response.requestId == renderInWorker.requestId) {
                 if (response.error) {
@@ -852,6 +859,8 @@ var MakerJsPlayground;
     MakerJsPlayground.svgFontSize = 14;
     MakerJsPlayground.useWorkerThreads = true;
     function runCodeFromEditor(paramValues) {
+        // Clear logs
+        document.getElementById('log').innerHTML = '';
         document.body.classList.add('wait');
         processed.kit = null;
         populateParams(null);
@@ -918,8 +927,12 @@ var MakerJsPlayground;
         resetDownload();
         processed.html = value.html || '';
 
+        console.log('whatup broda');
+        console.log(value);
+
         console.log('Setting processed model to null');
         setProcessedModel(null);
+
         //see if output is either a Node module, or a MakerJs.IModel
         if (typeof result === 'function') {
             console.log('Type is function');
@@ -934,9 +947,7 @@ var MakerJsPlayground;
             function setKitOnMainThread() {
                 constructOnMainThread(enableKit);
             }
-            console.log('I Want to do this thing');
             if (false /*MakerJsPlayground.useWorkerThreads && Worker */) {
-                console.log('RUNNING DIS TIIIING');
                 constructInWorker(getLatestCode(), value.orderedDependencies, function (model) {
                     enableKit();
                     setProcessedModel(model);
@@ -947,22 +958,23 @@ var MakerJsPlayground;
             }
         }
         else if (makerjs.isModel(result)) {
-            console.log('result is a model');
             processed.kit = null;
             populateParams(null);
-            console.log('Setting processed model to ', result);
             setProcessedModel(result);
         }
         else if (isIJavaScriptErrorDetails(result)) {
-            console.log('ERROR - need to do something with this');
-            //render script error
-            highlightCodeError(result);
+            const log = document.getElementById("log");
+            const msg = `Error line ${result.lineno}:${result.colno} ${result.message}`;
+            log.innerHTML = log.innerHTML + '<br>' + msg;
+            // console.log('ERROR - need to do something with this');
+            // console.log(result);
+            // render script error
+            // highlightCodeError(result);
             if (MakerJsPlayground.onViewportChange) {
                 MakerJsPlayground.onViewportChange();
             }
         }
         else {
-            console.log('Fallback');
             render();
             if (MakerJsPlayground.onViewportChange) {
                 MakerJsPlayground.onViewportChange();
@@ -1312,19 +1324,19 @@ var MakerJsPlayground;
     }
     MakerJsPlayground.isSmallDevice = isSmallDevice;
     function onWindowResize() {
-        if (checkFitToScreen.checked) {
-            fitOnScreen();
-            render();
-        }
-        if (MakerJsPlayground.fullScreen) {
-            dockEditor(dockModes.FullScreen);
-        }
-        else if (document.body.offsetWidth < minDockSideBySide) {
-            dockEditor(dockModes.None);
-        }
-        else {
-            dockEditor(dockModes.SideBySide);
-        }
+        // if (checkFitToScreen.checked) {
+        //     fitOnScreen();
+        //     render();
+        // }
+        // if (MakerJsPlayground.fullScreen) {
+        //     dockEditor(dockModes.FullScreen);
+        // }
+        // else if (document.body.offsetWidth < minDockSideBySide) {
+        //     dockEditor(dockModes.None);
+        // }
+        // else {
+        //     dockEditor(dockModes.SideBySide);
+        // }
     }
     MakerJsPlayground.onWindowResize = onWindowResize;
     function loadInsertPage() {
@@ -1364,6 +1376,14 @@ var MakerJsPlayground;
                 }, 0);
         }
     }
+    MakerJsPlayground.log = function (e) {
+        if (document.getElementById('log').innerHTML == "") {
+            document.getElementById('log').innerHTML = e;
+        } else {
+            document.getElementById('log').innerHTML += '<br>' + e;
+        }
+    };
+
     MakerJsPlayground.command = command;
     //execution
     window.onload = function (ev) {
