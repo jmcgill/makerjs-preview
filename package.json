@@ -44,7 +44,7 @@
   "dependencies": {
     "chokidar": "^3.3.1",
     "electron": "^19.0.9",
-    "moment": "^2.24.0"
+    "moment": "^2.29.4"
   },
   "bugs": {
     "url": "https://github.com/jmcgill/makerjs-preview/issues"
