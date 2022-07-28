@@ -53,7 +53,7 @@ function createWindow () {
   });
   mainWindow.loadFile('splash.html');
 
-  mainWindow.webContents.openDevTools();
+  // mainWindow.webContents.openDevTools();
 
   const p = path.join(app.getPath('userData'), 'config.json');
   if (fs.existsSync(p)) {
