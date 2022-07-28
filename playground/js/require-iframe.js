@@ -35,6 +35,7 @@ var MakerJsRequireIframe;
         var script = document.createElement('script');
         var fragment = document.createDocumentFragment();
         fragment.textContent = javaScript;
+        console.log('Running: ', javaScript);
         script.appendChild(fragment);
         head.appendChild(script);
     }
@@ -173,7 +174,7 @@ var MakerJsRequireIframe;
         console.log('Running window onLoad');
         head = document.getElementsByTagName('head')[0];
         //get the code from the editor
-        var javaScript = parent.window.getLatestCode();// parent.MakerJsPlayground.codeMirrorEditor.getDoc().getValue();
+        // var javaScript = parent.window.getLatestCode();// parent.MakerJsPlayground.codeMirrorEditor.getDoc().getValue();
         var originalAlert = window.alert;
         window.alert = devNull;
         //run the code in 2 passes, first - to cache all required libraries, secondly the actual execution
@@ -208,7 +209,9 @@ var MakerJsRequireIframe;
                 return originalFn(itemToExport, options);
             };
             //when all requirements are collected, run the code again, using its requirements
-            runCodeGlobal(javaScript);
+            parent.window.getLatestCode().then((code) => {
+                runCodeGlobal(code);
+            })
             parent.makerjs.exporter.toSVG = originalFn;
             if (errorReported)
                 return;

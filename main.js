@@ -47,10 +47,13 @@ function createWindow () {
     height: 600,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
-      nodeIntegration: true
+      // nodeIntegration: true,
+      // contextIsolation: false
     }
   });
   mainWindow.loadFile('splash.html');
+
+  mainWindow.webContents.openDevTools();
 
   const p = path.join(app.getPath('userData'), 'config.json');
   if (fs.existsSync(p)) {
@@ -130,14 +133,25 @@ function completeStartup() {
   });
 }
 
-function getLatestCode() {
-  return fs.readFileSync(filename);
-}
-
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.on('ready', createWindow);
+app.on('ready', () => {
+    ipcMain.handle(
+        "getLatestCode",
+        (event) => {
+            return fs.readFileSync(filename, 'utf-8');
+        }
+    );
+
+    ipcMain.handle(
+        "saveFile",
+        (event, format, text, filename) => {
+            return saveFile(format, text, filename)
+        }
+    );
+    createWindow();
+});
 
 // Quit when all windows are closed.
 app.on('window-all-closed', function () {
@@ -151,8 +165,3 @@ app.on('activate', function () {
   // dock icon is clicked and there are no other windows open.
   if (BrowserWindow.getAllWindows().length === 0) createWindow()
 });
-
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and require them here.
-exports.getLatestCode = getLatestCode;
-exports.saveFile = saveFile;

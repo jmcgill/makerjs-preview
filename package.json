@@ -38,12 +38,12 @@
     }
   },
   "devDependencies": {
-    "electron": "^8.1.1",
     "electron-builder": "^22.4.1",
     "electron-icon-builder": "^1.0.2"
   },
   "dependencies": {
     "chokidar": "^3.3.1",
+    "electron": "^19.0.9",
     "electron-prompt": "^1.5.1",
     "moment": "^2.24.0"
   },

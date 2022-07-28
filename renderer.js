@@ -5,20 +5,24 @@
 // selectively enable features needed in the rendering
 // process.
 
-const { remote, ipcRenderer } = require('electron');
-const main = remote.require('./main.js');
-const $ = require('../jquery.min');
-const prompt = require('electron-prompt');
+// const { ipcRenderer } = require('electron');
+// const main = remote.require('./main.js');
+// const $ = require('../jquery.min');
+// const prompt = require('electron-prompt');
 
 window.ELECTRON_DISABLE_SECURITY_WARNINGS = true;
 
-function getLatestCode() {
-    return main.getLatestCode();
+async function getLatestCode() {
+    console.log('Getting the latest code');
+    const code =  await window.electronApi.getLatestCode();
+    console.log('Code is: ', code);
+    return code;
+    // return main.getLatestCode();
 }
 
-ipcRenderer.on('reload', () => {
-    MakerJsPlayground.runCodeFromEditor();
-});
+// ipcRenderer.on('reload', () => {
+//     MakerJsPlayground.runCodeFromEditor();
+// });
 
 function snapshot() {
     var request = {
@@ -34,8 +38,9 @@ function snapshot() {
 }
 
 function saveFile(format, text) {
-    prompt({title: "Save", label: "What should this be saved as?"}).then((filename) => {
-        console.log('Filename is ', filename);
-        main.saveFile(format, text, filename);
-    });
+    // prompt({title: "Save", label: "What should this be saved as?"}).then((filename) => {
+    //     console.log('Filename is ', filename);
+    //     ipcRenderer.sendSync('saveFile', format, text, filename);
+    //     // main.saveFile(format, text, filename);
+    // });
 }

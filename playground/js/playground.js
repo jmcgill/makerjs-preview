@@ -948,10 +948,12 @@ var MakerJsPlayground;
                 constructOnMainThread(enableKit);
             }
             if (false /*MakerJsPlayground.useWorkerThreads && Worker */) {
-                constructInWorker(getLatestCode(), value.orderedDependencies, function (model) {
-                    enableKit();
-                    setProcessedModel(model);
-                }, setKitOnMainThread);
+                getLatestCode().then((code) => {
+                    constructInWorker(code, value.orderedDependencies, function (model) {
+                        enableKit();
+                        setProcessedModel(model);
+                    }, setKitOnMainThread);
+                })
             }
             else {
                 setKitOnMainThread();
