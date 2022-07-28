@@ -3,10 +3,8 @@
 const { contextBridge, ipcRenderer } = require('electron')
 
 contextBridge.exposeInMainWorld('electronApi', {
-  getLatestCode: () => ipcRenderer.invoke('getLatestCode')
-});
-
-contextBridge.exposeInMainWorld('electronAPI', {
+  getLatestCode: () => ipcRenderer.invoke('getLatestCode'),
+  saveFile: (format, text, filename) => ipcRenderer.invoke('saveFile', format, text, filename),
   onReload: (callback) => ipcRenderer.on('reload', callback)
 });
 

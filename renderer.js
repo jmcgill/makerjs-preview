@@ -12,17 +12,16 @@
 
 window.ELECTRON_DISABLE_SECURITY_WARNINGS = true;
 
+window.addEventListener('DOMContentLoaded', () => {
+    window.electronApi.onReload((_event, value) => {
+        MakerJsPlayground.runCodeFromEditor();
+    })
+});
+
 async function getLatestCode() {
-    console.log('Getting the latest code');
-    const code =  await window.electronApi.getLatestCode();
-    console.log('Code is: ', code);
-    return code;
+    return await window.electronApi.getLatestCode();
     // return main.getLatestCode();
 }
-
-window.electronAPI.onReload((_event, value) => {
-    MakerJsPlayground.runCodeFromEditor();
-})
 
 function snapshot() {
     var request = {
@@ -40,7 +39,6 @@ function snapshot() {
 function saveFile(format, text) {
     // prompt({title: "Save", label: "What should this be saved as?"}).then((filename) => {
     //     console.log('Filename is ', filename);
-    //     ipcRenderer.sendSync('saveFile', format, text, filename);
-    //     // main.saveFile(format, text, filename);
+    //     window.electronApi.saveFile(format, text, filename);
     // });
 }
