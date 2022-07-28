@@ -22,7 +22,7 @@
     ajv "^6.12.0"
     ajv-keywords "^3.4.1"
 
-"@electron/get@^1.14.1":
+"@electron/get@^1.13.0":
   version "1.14.1"
   resolved "https://registry.yarnpkg.com/@electron/get/-/get-1.14.1.tgz#16ba75f02dffb74c23965e72d617adc721d27f40"
   integrity sha512-BrZYyL/6m0ZXz/lDxy/nlVhQz+WF+iPS6qXolEU8atw7h6v1aYkjwJZ63m+bJMBTxDE66X+r2tPS4a/8C82sZw==
@@ -460,10 +460,10 @@
   resolved "https://registry.yarnpkg.com/@types/node/-/node-18.6.1.tgz#828e4785ccca13f44e2fb6852ae0ef11e3e20ba5"
   integrity sha512-z+2vB6yDt1fNwKOeGbckpmirO+VBDuQqecXkgeIqDlaOtmKn6hPR/viQ8cxCfqLU4fTlvM3+YjM367TukWdxpg==
 
-"@types/node@^16.11.26":
-  version "16.11.45"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-16.11.45.tgz#155b13a33c665ef2b136f7f245fa525da419e810"
-  integrity sha512-3rKg/L5x0rofKuuUt5zlXzOnKyIHXmIu5R8A0TuNDMF2062/AOIDBciFIjToLEJ/9F9DzkHNot+BpNsMI1OLdQ==
+"@types/node@^14.6.2":
+  version "14.18.22"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-14.18.22.tgz#fd2a15dca290fc9ad565b672fde746191cd0c6e6"
+  integrity sha512-qzaYbXVzin6EPjghf/hTdIbnVW1ErMx8rPzwRNJhlbyJhu2SyqlvjGOY/tbUt6VFyzg56lROcOeSQRInpt63Yw==
 
 "@types/plist@^3.0.1":
   version "3.0.2"
@@ -1307,13 +1307,13 @@ electron-publish@22.14.13:
     lazy-val "^1.0.5"
     mime "^2.5.2"
 
-electron@^19.0.9:
-  version "19.0.9"
-  resolved "https://registry.yarnpkg.com/electron/-/electron-19.0.9.tgz#e95bc18e14aac0af1290fcc7045001ef5ad96a64"
-  integrity sha512-ooEwrv8Y7NSzdhKcl6kPCYecnzcg5nFWuS5ryG+VFH3MMBR8zXh9nW2wLsZrBz6OGUxXrcc5BKBC7dA8C6RhGQ==
+electron@^15.5.5:
+  version "15.5.5"
+  resolved "https://registry.yarnpkg.com/electron/-/electron-15.5.5.tgz#796b7822bfb2b045b504e40657674f2869361681"
+  integrity sha512-cGS1ueek14WLvLJlJbId3fmqJLvkr7VuBI0hHt6gpKaj8m2iv/NMteRg0deLgwlxjEF6ZGGNerUJW6a96rNq/Q==
   dependencies:
-    "@electron/get" "^1.14.1"
-    "@types/node" "^16.11.26"
+    "@electron/get" "^1.13.0"
+    "@types/node" "^14.6.2"
     extract-zip "^1.0.3"
 
 emoji-regex@^8.0.0:

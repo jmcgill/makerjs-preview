@@ -43,7 +43,7 @@
   },
   "dependencies": {
     "chokidar": "^3.3.1",
-    "electron": "^19.0.9",
+    "electron": "^15.5.5",
     "moment": "^2.24.0"
   },
   "bugs": {
