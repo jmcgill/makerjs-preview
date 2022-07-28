@@ -926,11 +926,6 @@ var MakerJsPlayground;
         var result = value.result;
         resetDownload();
         processed.html = value.html || '';
-
-        console.log('whatup broda');
-        console.log(value);
-
-        console.log('Setting processed model to null');
         setProcessedModel(null);
 
         //see if output is either a Node module, or a MakerJs.IModel

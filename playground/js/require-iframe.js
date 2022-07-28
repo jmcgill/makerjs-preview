@@ -171,114 +171,114 @@ var MakerJsRequireIframe;
     };
     window.module = { exports: null };
     window.onload = function () {
-        console.log('Running window onLoad');
-        head = document.getElementsByTagName('head')[0];
-        //get the code from the editor
-        // var javaScript = parent.window.getLatestCode();// parent.MakerJsPlayground.codeMirrorEditor.getDoc().getValue();
-        var originalAlert = window.alert;
-        window.alert = devNull;
-        //run the code in 2 passes, first - to cache all required libraries, secondly the actual execution
-        function complete2() {
-            console.log('Complete 2');
-            //reset any calls to document.write
-            resetLog();
-            //reinstate alert
-            window.alert = originalAlert;
-            var originalFn = parent.makerjs.exporter.toSVG;
-            var captureExportedModel;
-            parent.makerjs.exporter.toSVG = function (itemToExport, options) {
-                if (parent.makerjs.isModel(itemToExport)) {
-                    captureExportedModel = itemToExport;
-                }
-                else if (Array.isArray(itemToExport)) {
-                    captureExportedModel = {};
-                    itemToExport.forEach(function (x, i) {
-                        if (makerjs.isModel(x)) {
-                            captureExportedModel.models = captureExportedModel.models || {};
-                            captureExportedModel.models[i] = x;
+        parent.window.getLatestCode().then((loadedCode) => {
+            console.log('Running window onLoad');
+            head = document.getElementsByTagName('head')[0];
+            //get the code from the editor
+            // var javaScript = parent.window.getLatestCode();// parent.MakerJsPlayground.codeMirrorEditor.getDoc().getValue();
+            var originalAlert = window.alert;
+            window.alert = devNull;
+            //run the code in 2 passes, first - to cache all required libraries, secondly the actual execution
+            function complete2() {
+                console.log('Complete 2');
+                //reset any calls to document.write
+                resetLog();
+                //reinstate alert
+                window.alert = originalAlert;
+                var originalFn = parent.makerjs.exporter.toSVG;
+                var captureExportedModel;
+                parent.makerjs.exporter.toSVG = function (itemToExport, options) {
+                    if (parent.makerjs.isModel(itemToExport)) {
+                        captureExportedModel = itemToExport;
+                    }
+                    else if (Array.isArray(itemToExport)) {
+                        captureExportedModel = {};
+                        itemToExport.forEach(function (x, i) {
+                            if (makerjs.isModel(x)) {
+                                captureExportedModel.models = captureExportedModel.models || {};
+                                captureExportedModel.models[i] = x;
+                            }
+                            if (makerjs.isPath(x)) {
+                                captureExportedModel.paths = captureExportedModel.paths || {};
+                                captureExportedModel.paths[i] = x;
+                            }
+                        });
+                    }
+                    else if (parent.makerjs.isPath(itemToExport)) {
+                        captureExportedModel = { paths: { "0": itemToExport } };
+                    }
+                    return originalFn(itemToExport, options);
+                };
+                //when all requirements are collected, run the code again, using its requirements
+                runCodeGlobal(loadedCode);
+                parent.makerjs.exporter.toSVG = originalFn;
+                if (errorReported)
+                    return;
+                //yield thread for the script tag to execute
+                setTimeout(function () {
+                    console.log('Running timeout');
+                    var model;
+                    if (captureExportedModel) {
+                        model = captureExportedModel;
+                    }
+                    else {
+                        //restore properties from the "this" keyword
+                        model = {};
+                        var props = ['layer', 'models', 'notes', 'origin', 'paths', 'type', 'units', 'caption', 'exporterOptions'];
+                        var hasProps = false;
+                        for (var i = 0; i < props.length; i++) {
+                            var prop = props[i];
+                            if (prop in window) {
+                                model[prop] = window[prop];
+                                hasProps = true;
+                            }
                         }
-                        if (makerjs.isPath(x)) {
-                            captureExportedModel.paths = captureExportedModel.paths || {};
-                            captureExportedModel.paths[i] = x;
+                        if (!hasProps) {
+                            model = null;
                         }
-                    });
-                }
-                else if (parent.makerjs.isPath(itemToExport)) {
-                    captureExportedModel = { paths: { "0": itemToExport } };
-                }
-                return originalFn(itemToExport, options);
-            };
-            //when all requirements are collected, run the code again, using its requirements
-            parent.window.getLatestCode().then((code) => {
-                runCodeGlobal(code);
-            })
-            parent.makerjs.exporter.toSVG = originalFn;
-            if (errorReported)
-                return;
-            //yield thread for the script tag to execute
-            setTimeout(function () {
-                console.log('Running timeout');
-                var model;
-                if (captureExportedModel) {
-                    model = captureExportedModel;
+                    }
+                    var orderedDependencies = [];
+                    var scripts = head.getElementsByTagName('script');
+                    for (var i = 0; i < scripts.length; i++) {
+                        if (scripts[i].hasAttribute('id')) {
+                            orderedDependencies.push(scripts[i].id);
+                        }
+                    }
+                    //send results back to parent window
+                    console.log('Porcessing result', model);
+                    parent.MakerJsPlayground.processResult({ logs: logs, html: getHtml(), result: window.module.exports || model, orderedDependencies: orderedDependencies, paramValues: window.paramValues });
+                }, 0);
+            }
+            ;
+            function complete1() {
+                console.log('Complete 1');
+                if (reloads.length) {
+                    counter.complete = complete2;
+                    counter.required += reloads.length;
+                    for (var i = reloads.length; i--;) {
+                        load(reloads[i], null);
+                    }
                 }
                 else {
-                    //restore properties from the "this" keyword
-                    model = {};
-                    var props = ['layer', 'models', 'notes', 'origin', 'paths', 'type', 'units', 'caption', 'exporterOptions'];
-                    var hasProps = false;
-                    for (var i = 0; i < props.length; i++) {
-                        var prop = props[i];
-                        if (prop in window) {
-                            model[prop] = window[prop];
-                            hasProps = true;
-                        }
-                    }
-                    if (!hasProps) {
-                        model = null;
-                    }
-                }
-                var orderedDependencies = [];
-                var scripts = head.getElementsByTagName('script');
-                for (var i = 0; i < scripts.length; i++) {
-                    if (scripts[i].hasAttribute('id')) {
-                        orderedDependencies.push(scripts[i].id);
-                    }
-                }
-                //send results back to parent window
-                console.log('Porcessing result', model);
-                parent.MakerJsPlayground.processResult({ logs: logs, html: getHtml(), result: window.module.exports || model, orderedDependencies: orderedDependencies, paramValues: window.paramValues });
-            }, 0);
-        }
-        ;
-        function complete1() {
-            console.log('Complete 1');
-            if (reloads.length) {
-                counter.complete = complete2;
-                counter.required += reloads.length;
-                for (var i = reloads.length; i--;) {
-                    load(reloads[i], null);
+                    complete2();
                 }
             }
-            else {
-                complete2();
+            counter.complete = complete1;
+            try {
+                //run for the collection pass
+                runCodeIsolated(javaScript);
             }
-        }
-        counter.complete = complete1;
-        try {
-            //run for the collection pass
-            runCodeIsolated(javaScript);
-        }
-        catch (e) {
-            //save the error
-            error = e;
-        }
-        collection = false;
-        //if there were no requirements, fire the complete function manually
-        if (counter.required == 0) {
-            console.log('Counter complete');
-            counter.complete();
-        }
+            catch (e) {
+                //save the error
+                error = e;
+            }
+            collection = false;
+            //if there were no requirements, fire the complete function manually
+            if (counter.required == 0) {
+                console.log('Counter complete');
+                counter.complete();
+            }
+        })
     };
     window.playgroundRender = function (result) {
         parent.MakerJsPlayground.processResult({ logs: logs, html: getHtml(), result: result, paramValues: window.paramValues });

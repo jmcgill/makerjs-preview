@@ -19,7 +19,9 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 
 async function getLatestCode() {
-    return await window.electronApi.getLatestCode();
+    const code = await window.electronApi.getLatestCode();
+    console.log(code);
+    return code;
     // return main.getLatestCode();
 }
 
