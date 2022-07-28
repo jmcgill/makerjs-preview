@@ -55,6 +55,7 @@ header h1 {
     background-color: #3177C6;
     margin-bottom: 1em;
     overflow: hidden;
+    height: 650px;
 }
 
 #view-params {
