@@ -20,9 +20,9 @@ async function getLatestCode() {
     // return main.getLatestCode();
 }
 
-// ipcRenderer.on('reload', () => {
-//     MakerJsPlayground.runCodeFromEditor();
-// });
+window.electronAPI.onReload((_event, value) => {
+    MakerJsPlayground.runCodeFromEditor();
+})
 
 function snapshot() {
     var request = {

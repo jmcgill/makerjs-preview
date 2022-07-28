@@ -4,7 +4,11 @@ const { contextBridge, ipcRenderer } = require('electron')
 
 contextBridge.exposeInMainWorld('electronApi', {
   getLatestCode: () => ipcRenderer.invoke('getLatestCode')
-})
+});
+
+contextBridge.exposeInMainWorld('electronAPI', {
+  onReload: (callback) => ipcRenderer.on('reload', callback)
+});
 
 window.addEventListener('DOMContentLoaded', () => {
   const replaceText = (selector, text) => {
